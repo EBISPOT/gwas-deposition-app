@@ -58,7 +58,13 @@ spec:
           env:
             - name: MONGO_SIDECAR_POD_LABELS
               value: "role=mongo,environment=sandbox"
-      volumes:
-      - name: mongo-persistent-storage
-        persistentVolumeClaim:
-           claimName: gwas-depo-mongo
+  volumeClaimTemplates:
+  - metadata:
+      name: mongo-persistent-storage
+      annotations:
+        volume.beta.kubernetes.io/storage-class: "gwas-mongo"
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 100Gi
