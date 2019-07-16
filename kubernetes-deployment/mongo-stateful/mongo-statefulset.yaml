@@ -31,12 +31,12 @@ metadata:
   name: mongo
 spec:
   serviceName: "mongo"
-  replicas: 1
+  replicas: 3
   template:
     metadata:
       labels:
         role: mongo
-        environment: sandbox
+        environment: test
     spec:
       terminationGracePeriodSeconds: 10
       containers:
@@ -46,6 +46,8 @@ spec:
             - mongod
             - "--replSet"
             - rs0
+            - "--bind_ip" # Add these two 
+            - 0.0.0.0     # lines...!!
             - "--smallfiles"
             - "--noprealloc"
           ports:
@@ -57,14 +59,13 @@ spec:
           image: cvallance/mongo-k8s-sidecar
           env:
             - name: MONGO_SIDECAR_POD_LABELS
-              value: "role=mongo,environment=sandbox"
+              value: "role=mongo,environment=test"
   volumeClaimTemplates:
   - metadata:
       name: mongo-persistent-storage
-      annotations:
-        volume.beta.kubernetes.io/storage-class: "gwas-mongo"
     spec:
-      accessModes: [ "ReadWriteOnce" ]
-      resources:
-        requests:
-          storage: 100Gi
+        accessModes: 
+        - ReadWriteMany
+        resources:
+            requests:
+                storage: 20Gi
