@@ -1,5 +1,51 @@
 # gwas-deposition-app
 
+## Logging PVC
+ * a PVC is now available to externalise log files: `gwas-depo-logs`
+ * Example:
+ ```
+  volumeMounts:
+ - mountPath: "/var/log/gwas"
+   name: log
+
+   ...
+   
+  volumes:
+  - name: log
+   persistentVolumeClaim:
+      claimName: gwas-depo-logs
+ ```
+
+## Ingress configuration
+
+ * Create an ingress configuration file - see below and deploy it
+ * Service will then be available at: `http://193.62.54.159/<<YOUR_SERVICE_ROUTE>>`
+
+```
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: <<NAME>>
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+spec:
+  rules:
+  - host:
+    http:
+      paths:
+      - path: /<<YOUR_SERVICE_ROUTE>>(/|$)(.*)
+        backend:
+          serviceName: <<YOUR_SERVICE_NAME_FROM_SERVICE_DIRECTORY>>
+          servicePort: <<PORT_ON_WHICH_THE_SERVICE_WAS_EXPOSED_IN_DEPLOYMENT_PLAN>>
+```
+
+## Kube service directory
+
+ * Backend: `gwas-deposition-backend`
+ * Template service: `<<ADD label here>>`
+ * Summary stats service: `<<ADD label here>>`
+ 
 ## MongoDB ReplicaSet deployment
 
 ### Configuration
