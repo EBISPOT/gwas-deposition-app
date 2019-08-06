@@ -1,0 +1,39 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: gwas-deposition-ui
+  namespace: default
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: gwas-deposition-ui
+    spec:
+      containers:
+      - name: gwas-deposition-ui
+        image: ebispot/gwas-deposition-ui:latest-sandbox
+        imagePullPolicy: Always
+        resources:
+          requests:
+            cpu: "10m"
+            memory: "32Mi"
+        ports:
+        - name: http
+          containerPort: 80
+---
+kind: Service
+apiVersion: v1
+metadata:
+  labels:
+    app: gwas-deposition-ui
+  name: gwas-deposition-ui
+  namespace: default
+spec:
+  type: ClusterIP
+  ports:
+  - name: "application"
+    port: 80
+    targetPort: 80
+  selector:
+    app: gwas-deposition-ui
