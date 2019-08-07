@@ -1,0 +1,44 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: gwas-template-service
+  namespace: default
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: gwas-template-service
+    spec:
+      containers:
+      - name: gwas-template-service
+        image: ebispot/gwas-deposition-template
+        imagePullPolicy: Always
+        resources:
+          requests:
+            cpu: "10m"
+            memory: "256Mi"
+        ports:
+        - name: http
+          containerPort: 8000
+        env:
+        - name: ENVIRONMENT
+          value: "sandbox"
+        - name: LOG_FILE_NAME
+          value: "gwas-template-service"
+---
+kind: Service
+apiVersion: v1
+metadata:
+  labels:
+    app: gwas-template-service
+  name: gwas-template-service
+  namespace: default
+spec:
+  type: LoadBalancer
+  ports:
+  - name: "application"
+    port: 8080
+    targetPort: 8000
+  selector:
+    app: gwas-template-service
