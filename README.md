@@ -78,3 +78,26 @@ spec:
   
 ### Connection
  * `mongodb://mongo-0.mongo.demo.svc.cluster.local,mongo-1.mongo.demo.svc.cluster.local,mongo-2.mongo.demo.svc.cluster.local:27017`
+
+## Zookeeper / Kafka ReplicaSet deployment
+
+### Configuration
+
+ * In the `namespace` folder, run `kubectl apply -f kafka-namespace.yml`
+ * `kubectl apply -f rbac-namespace/`
+ * `kubectl apply -f zookeeper/`
+ * `kubectl apply -f kafka/`
+
+### Tests
+
+ * In the `namespace` folder, run `kubectl apply -f test-kafka-namespace.yml`
+ * Run `kubectl apply -R -f tests/`
+ * Run `kubectl get pods -l test-type=readiness --namespace=test-kafka` and give it 2-3 min.
+ * All non-ready pods represent failed tests
+ * Clean-up
+   * Run `kubectl delete -f tests/`
+   * In the `namespace` folder, run `kubectl delete -f test-kafka-namespace.yml`
+
+### Connection
+
+ * (_TBC_)

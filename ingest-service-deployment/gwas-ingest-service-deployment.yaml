@@ -1,0 +1,55 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: gwas-ingest-service
+  namespace: default
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: gwas-ingest-service
+    spec:
+      containers:
+      - name: gwas-ingest-service
+        image: ebispot/gwas-deposition-ingest:latest-sandbox
+        imagePullPolicy: Always
+        resources:
+          requests:
+            cpu: "10m"
+            memory: "512Mi"
+        ports:
+        - name: http
+          containerPort: 8080
+        volumeMounts:
+        - mountPath: "/var/log/gwas"
+          name: log
+        env:
+        - name: ENVIRONMENT
+          value: "sandbox"
+        - name: XMS
+          value: "-Xms192m"
+        - name: XMX
+          value: "-Xmx192m"
+        - name: LOG_FILE_NAME
+          value: "gwas-ingest-service"
+      volumes:
+      - name: log
+        persistentVolumeClaim:
+           claimName: gwas-depo-logs
+---
+kind: Service
+apiVersion: v1
+metadata:
+  labels:
+    app: gwas-ingest-service
+  name: gwas-ingest-service
+  namespace: default
+spec:
+  type: ClusterIP
+  ports:
+  - name: "application"
+    port: 8080
+    targetPort: 8080
+  selector:
+    app: gwas-ingest-service

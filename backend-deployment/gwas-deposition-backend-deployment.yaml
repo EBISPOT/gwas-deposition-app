@@ -1,0 +1,55 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: gwas-deposition-backend
+  namespace: default
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: gwas-deposition-backend
+    spec:
+      containers:
+      - name: gwas-deposition-backend
+        image: ebispot/gwas-deposition-backend:latest-sandbox
+        imagePullPolicy: Always
+        resources:
+          requests:
+            cpu: "10m"
+            memory: "512Mi"
+        ports:
+        - name: http
+          containerPort: 8080
+        volumeMounts:
+        - mountPath: "/var/log/gwas"
+          name: log
+        env:
+        - name: ENVIRONMENT
+          value: "sandbox"
+        - name: XMS
+          value: "-Xms192m"
+        - name: XMX
+          value: "-Xmx192m"
+        - name: LOG_FILE_NAME
+          value: "gwas-deposition-backend"
+      volumes:
+      - name: log
+        persistentVolumeClaim:
+           claimName: gwas-depo-logs
+---
+kind: Service
+apiVersion: v1
+metadata:
+  labels:
+    app: gwas-deposition-backend
+  name: gwas-deposition-backend
+  namespace: default
+spec:
+  type: ClusterIP
+  ports:
+  - name: "application"
+    port: 8080
+    targetPort: 8080
+  selector:
+    app: gwas-deposition-backend

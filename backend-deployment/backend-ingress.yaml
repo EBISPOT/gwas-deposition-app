@@ -1,0 +1,17 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: backend-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/proxy-body-size: "30m"
+spec:
+  rules:
+  - host:
+    http:
+      paths:
+      - path: /backend(/|$)(.*)
+        backend:
+          serviceName: gwas-deposition-backend
+          servicePort: 8080
