@@ -83,21 +83,21 @@ spec:
 
 ### Configuration
 
- * In the `namespace` folder, run `kubectl apply -f kafka-namespace.yml`
- * `kubectl apply -f rbac-namespace/`
- * `kubectl apply -f zookeeper/`
- * `kubectl apply -f kafka/`
-
+ * Install `helm`: https://helm.sh/docs/using_helm/
+ * Run `helm init` - this will attempt to install `tiller` inside the cluster, which in this case already exists
+ * Add `kafka` repo: `helm repo add incubator http://storage.googleapis.com/kubernetes-charts-incubator`
+ * Create namespace: `kubectl create -f kafka-namespace.yml`
+ * Install kafka: `helm install --name my-kafka --namespace kafka incubator/kafka`
+ 
 ### Tests
 
- * In the `namespace` folder, run `kubectl apply -f test-kafka-namespace.yml`
- * Run `kubectl apply -R -f tests/`
- * Run `kubectl get pods -l test-type=readiness --namespace=test-kafka` and give it 2-3 min.
- * All non-ready pods represent failed tests
- * Clean-up
-   * Run `kubectl delete -f tests/`
-   * In the `namespace` folder, run `kubectl delete -f test-kafka-namespace.yml`
+ * Create test pod: `kubectl create -f test-pod.yml`
+ * List topics: `kubectl -n kafka exec testclient -- kafka-topics --zookeeper my-kafka-zookeeper:2181 --list`
+ * Create new topic: `kubectl -n kafka exec testclient -- kafka-topics --zookeeper my-kafka-zookeeper:2181 --topic test1 --create --partitions 1 --replication-factor 1`
+ * Listen for messages on a topic (Ctrl + C to stop): `kubectl -n kafka exec -ti testclient -- kafka-console-consumer --bootstrap-server my-kafka:9092 --topic test1 --from-beginningkubectl -n kafka exec -ti testclient -- kafka-console-consumer --bootstrap-server my-kafka:9092 --topic test1 --from-beginning`
+ * Start an interactive message producer session (Ctrl + C to stop): `kubectl -n kafka exec -ti testclient -- kafka-console-producer --broker-list my-kafka-headless:9092 --topic test1`
+ * Delete test pod: `kubectl delete -f test-pod.yml`
 
 ### Connection
 
- * (_TBC_)
+ * `my-kafka.kafka.svc.cluster.local:9092`
