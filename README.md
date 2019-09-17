@@ -88,7 +88,7 @@ spec:
  * Add `kafka` repo: `helm repo add incubator http://storage.googleapis.com/kubernetes-charts-incubator`
  * Create namespace: `kubectl create -f kafka-namespace.yml`
  * Install kafka: `helm install --name my-kafka --namespace kafka incubator/kafka`
- 
+
 ### Tests
 
  * Create test pod: `kubectl create -f test-pod.yml`
@@ -101,3 +101,13 @@ spec:
 ### Connection
 
  * `my-kafka.kafka.svc.cluster.local:9092`
+ 
+## Zookeeper / SOLR ReplicaSet deployment
+
+### Configuration
+
+ * Install `helm`: https://helm.sh/docs/using_helm/
+ * Run `helm init` - this will attempt to install `tiller` inside the cluster, which in this case already exists
+ * Add `kafka` repo: `helm repo add incubator http://storage.googleapis.com/kubernetes-charts-incubator`
+ * Install solr: `helm install --name solr incubator/solr`
+   * Alternative (with some more parameters): `helm install --name solr --set image.tag=8.2.0,javaMem="-Xms1g -Xmx1g",logLevel=INFO,replicaCount=1 incubator/solr`
