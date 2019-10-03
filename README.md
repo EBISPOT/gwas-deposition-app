@@ -106,8 +106,46 @@ spec:
 
 ### Configuration
 
- * Install `helm`: https://helm.sh/docs/using_helm/
- * Run `helm init` - this will attempt to install `tiller` inside the cluster, which in this case already exists
- * Add `kafka` repo: `helm repo add incubator http://storage.googleapis.com/kubernetes-charts-incubator`
- * Install solr: `helm install --name solr incubator/solr`
-   * Alternative (with some more parameters): `helm install --name solr --set image.tag=8.2.0,javaMem="-Xms1g -Xmx1g",logLevel=INFO,replicaCount=1 incubator/solr`
+ * Run `kubectl create -f solr.yml`
+ * **Notes:**:
+    * Current SOLR configuration creates 3 zookeeper pods and 3 SOLR pods.
+    * The number of replicas is set by altering the following components:
+
+Zookeeper headless service replicas:
+```bash
+    spec:
+        serviceName: solr-zookeeper-headless
+        replicas: 3
+```
+
+Zookeeper environment variables:
+```bash
+    env:
+    - name: ZK_REPLICAS
+        value: "3"
+```
+
+SOLR stateful set replicas:
+```bash
+kind: StatefulSet
+metadata:
+  name: solr
+
+...
+
+  serviceName: solr-headless
+  replicas: 3
+```
+
+   * **Important:** SOLR needs to know the number of zookeeper nodes available and their fully qualifier addresses. This is specified under the SOLR service configuration and for 3 nodes the specification is listed below:
+   
+```bash
+      initContainers:
+        - name: check-zk
+          image: busybox:latest
+...
+
+                for i in "solr-zookeeper-0.solr-zookeeper-headless" "solr-zookeeper-1.solr-zookeeper-headless" "solr-zookeeper-2.solr-zookeeper-headless";
+```
+
+   * The three zookeeper pods are denoted by: `solr-zookeeper-<POD_NUMBER>.solr-zookeeper-headless`. The number of zookeeper pods listed in this `for` statement should be the same as the number of zookeeper replicas specified above.
