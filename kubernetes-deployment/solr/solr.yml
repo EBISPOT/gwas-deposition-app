@@ -87,7 +87,7 @@ metadata:
     component: server
 spec:
   serviceName: solr-zookeeper-headless
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: zookeeper
@@ -145,7 +145,7 @@ spec:
             
           env:
             - name: ZK_REPLICAS
-              value: "3"
+              value: "1"
             - name: JMXAUTH
               value: "false"
             - name: JMXDISABLE
@@ -181,7 +181,12 @@ spec:
             - name: ZK_TICK_TIME
               value: "2000"
           resources:
-            {}
+            requests:
+                memory: "256Mi"
+                cpu: "10m"
+            limits:
+                memory: "1024Mi"
+                cpu: "250m"
             
           volumeMounts:
             - name: data
@@ -218,7 +223,7 @@ spec:
       app.kubernetes.io/instance: "solr"
       app.kubernetes.io/component: "server"
   serviceName: solr-headless
-  replicas: 3
+  replicas: 1
   updateStrategy:
         type: RollingUpdate
     
@@ -255,7 +260,7 @@ spec:
             - |
               COUNTER=0;
               while [  $COUNTER -lt 120 ]; do
-                for i in "solr-zookeeper-0.solr-zookeeper-headless" "solr-zookeeper-1.solr-zookeeper-headless" "solr-zookeeper-2.solr-zookeeper-headless";
+                for i in "solr-zookeeper-0.solr-zookeeper-headless";
                   do mode=$(echo srvr | nc $i 2181 | grep "Mode");
                     if [ "$mode" == "Mode: leader" ] || [ "$mode" == "Mode: standalone" ]; then
                       exit 0;
@@ -286,7 +291,7 @@ spec:
               name: solr-client
           env:
             - name: "SOLR_JAVA_MEM"
-              value: "-Xms2g -Xmx3g"
+              value: "-Xms1024m -Xmx1024m"
             - name: "SOLR_HOME"
               value: "/opt/solr/server/home"
             - name: "SOLR_PORT"
@@ -301,7 +306,14 @@ spec:
               value: "solr-zookeeper:2181"
             - name: "SOLR_LOG_LEVEL"
               value: "INFO"
-
+          resources:
+            requests:
+                memory: "256Mi"
+                cpu: "10m"
+            limits:
+                memory: "1024Mi"
+                cpu: "250m"
+              
           livenessProbe:
             initialDelaySeconds: 45
             periodSeconds: 10
