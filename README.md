@@ -108,8 +108,8 @@ spec:
 
  * Run `kubectl create -f solr.yml`
  * **Notes:**:
-    * Current SOLR configuration creates 3 zookeeper pods and 3 SOLR pods.
-    * The number of replicas is set by altering the following components:
+    * Current SOLR configuration creates 1 zookeeper pod and 1 SOLR pod.
+    * The number of replicas is set by altering the following components (examples below are for 3 replicas):
 
 Zookeeper headless service replicas:
 ```bash
