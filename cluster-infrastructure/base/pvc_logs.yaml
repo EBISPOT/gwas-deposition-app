@@ -2,6 +2,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: gwas-depo-logs
+  namespace: gwas
 spec:
   storageClassName: nfs-client
   accessModes:

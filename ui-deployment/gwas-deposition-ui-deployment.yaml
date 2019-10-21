@@ -2,7 +2,7 @@ apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   name: gwas-deposition-ui
-  namespace: default
+  namespace: gwas
 spec:
   replicas: 1
   template:
@@ -28,12 +28,12 @@ metadata:
   labels:
     app: gwas-deposition-ui
   name: gwas-deposition-ui
-  namespace: default
+  namespace: gwas
 spec:
-  type: ClusterIP
+  type: NodePort
   ports:
   - name: "application"
     port: 80
-    targetPort: 80
+    nodePort: 30667
   selector:
     app: gwas-deposition-ui
