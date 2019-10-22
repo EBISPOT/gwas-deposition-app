@@ -34,6 +34,6 @@ spec:
   ports:
   - name: "application"
     port: 80
-    nodePort: 30667
+    nodePort: 30668
   selector:
     app: gwas-deposition-ui
