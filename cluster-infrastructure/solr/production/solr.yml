@@ -91,7 +91,7 @@ metadata:
     component: server
 spec:
   serviceName: solr-zookeeper-headless
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
       app: zookeeper
@@ -149,7 +149,7 @@ spec:
             
           env:
             - name: ZK_REPLICAS
-              value: "1"
+              value: "3"
             - name: JMXAUTH
               value: "false"
             - name: JMXDISABLE
@@ -186,10 +186,10 @@ spec:
               value: "2000"
           resources:
             requests:
-                memory: "256Mi"
-                cpu: "10m"
+                memory: "512Mi"
+                cpu: "100m"
             limits:
-                memory: "1024Mi"
+                memory: "2048Mi"
                 cpu: "250m"
             
           volumeMounts:
@@ -228,7 +228,7 @@ spec:
       app.kubernetes.io/instance: "solr"
       app.kubernetes.io/component: "server"
   serviceName: solr-headless
-  replicas: 1
+  replicas: 3
   updateStrategy:
         type: RollingUpdate
     
@@ -265,7 +265,7 @@ spec:
             - |
               COUNTER=0;
               while [  $COUNTER -lt 120 ]; do
-                for i in "solr-zookeeper-0.solr-zookeeper-headless";
+                for i in "solr-zookeeper-0.solr-zookeeper-headless" "solr-zookeeper-1.solr-zookeeper-headless" "solr-zookeeper-2.solr-zookeeper-headless";
                   do mode=$(echo srvr | nc $i 2181 | grep "Mode");
                     if [ "$mode" == "Mode: leader" ] || [ "$mode" == "Mode: standalone" ]; then
                       exit 0;
@@ -313,10 +313,10 @@ spec:
               value: "INFO"
           resources:
             requests:
-                memory: "256Mi"
-                cpu: "10m"
+                memory: "512Mi"
+                cpu: "100m"
             limits:
-                memory: "1024Mi"
+                memory: "2048Mi"
                 cpu: "250m"
               
           livenessProbe:

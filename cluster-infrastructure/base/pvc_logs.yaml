@@ -4,7 +4,8 @@ metadata:
   name: gwas-depo-logs
   namespace: gwas
 spec:
-  storageClassName: nfs-client
+#  storageClassName: nfs-client
+  storageClassName: standard
   accessModes:
     - ReadWriteOnce
   resources:
