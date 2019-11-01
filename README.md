@@ -16,6 +16,20 @@
       claimName: gwas-depo-logs
  ```
 
+## Rabbit mq configuration 
+
+The summary stats service uses rabbit mq. Install rabbit mq in the cluster using helm into the rabbitmq namespace. 
+
+```
+helm install --name rabbitmq --namespace rabbitmq --set rabbitmq.username=ebigwasuser,service.type=NodePort,service.nodePort=30672 stable/rabbitmq
+```
+
+The username and password is generated for you and always available from the k8 secrets
+
+```
+kubectl -n rabbitmq get secret rabbitmq -o yaml
+```
+
 ## Ingress configuration
 
  * Create an ingress configuration file - see below and deploy it
