@@ -11,7 +11,7 @@ spec:
   - host:
     http:
       paths:
-      - path: /deposition(/|$)(.*)
+      - path: /gwas/deposition(/|$)(.*)
         backend:
           serviceName: gwas-deposition-ui
           servicePort: 80
